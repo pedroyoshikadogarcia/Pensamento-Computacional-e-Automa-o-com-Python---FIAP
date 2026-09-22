@@ -49,3 +49,19 @@ def export_csv():
         return path_csv
     except PermissionError:
         return None
+
+def update_lead(index, new_lead_dict):
+    leads = read_leads()
+    if 0 <= index < len(leads):
+        leads[index] = new_lead_dict
+        DB_PATH.write_text(json.dumps(leads, ensure_ascii=False, indent=2), encoding="utf-8")
+        return True
+    return False
+
+def delete_lead(index):
+    leads = read_leads()
+    if 0 <= index < len(leads):
+        leads.pop(index)
+        DB_PATH.write_text(json.dumps(leads, ensure_ascii=False, indent=2), encoding="utf-8")
+        return True
+    return False
