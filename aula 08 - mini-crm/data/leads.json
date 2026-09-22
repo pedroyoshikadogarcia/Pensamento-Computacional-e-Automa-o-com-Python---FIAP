@@ -5,5 +5,12 @@
     "email": "j@s",
     "stage": "novo",
     "create": "2026-09-08"
+  },
+  {
+    "name": "Pedro",
+    "company": "aaaa",
+    "email": "pedro@email.com",
+    "stage": "Sla",
+    "create": "2026-09-22"
   }
 ]

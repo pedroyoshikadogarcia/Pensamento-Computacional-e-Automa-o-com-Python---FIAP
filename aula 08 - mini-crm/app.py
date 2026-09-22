@@ -1,71 +1,85 @@
-from os import name
 from model import model_lead
 import control
 
+
 def add_lead():
-    name = input("Nome: ")
-    email = input("Email: ")
-    company = input("Empresa: ")
-    stage = input("Estágio de Vendas: ")
+    name = input("Nome: ").strip()
+    email = input("Email: ").strip()
+    company = input("Empresa: ").strip()
+    stage = input("Estágio de Vendas: ").strip()
 
     if not name or not email or "@" not in email:
         print("Nome e/ou email válido são obrigatórios.")
         return
 
-    #chamar model para modelar dados
-    print(model_lead(name,email,company,stage))
-    #Depois de modelado
-    # chamar control.py para enviar os dados modelados para o banco de dados json
-    control.create_lead(model_lead(name,company,email,stage))
+    lead = model_lead(name, company, email, stage)
+    print("\nLead gerado:", lead)
+
+    control.create_lead(lead)
+    print("Lead salvo com sucesso!")
+
+
 def search_leads():
     query = input("Buscar por: ").strip().lower()
     if not query:
-        print("COnsulta vazia")
+        print("Consulta vazia")
         return
-    leads_finded = control.query_leads(query)
-    print("\n# | Nome                       | Empresa                                | Email")
-    for i, lead in enumerate(leads_finded):
-        print(f"{i:02d}| {lead["name"]:<20} | {lead["company"]: <17} | {lead["email"]: <20}")
+
+    leads_found = control.query_leads(query)
+    if not leads_found:
+        print("Nenhum resultado encontrado.")
+        return
+
+    print("\n#  | Nome                 | Empresa           | Email")
+    print("-" * 60)
+    for i, lead in enumerate(leads_found):
+        print(f"{i:02d} | {lead['name']:<20} | {lead['company']:<17} | {lead['email']:<20}")
+
 
 def export_leads():
     path_csv = control.export_csv()
     if path_csv is None:
-        print("Não foi possivel exportar os leads para CSV")
+        print("Não foi possível exportar os leads para CSV.")
     else:
         print(f"CSV exportado para {path_csv}")
+
+
 def list_leads():
     leads = control.read_leads()
 
     if not leads:
-        print ("nenhuma lead ainda")
+        print("Nenhum lead ainda.")
         return
-    print (f"\n# | {"Nome"} {"Empresa"} {"Email"}")
+
+    print("\n#  | Nome                 | Empresa           | Email")
+    print("-" * 60)
     for i, lead in enumerate(leads):
-        print(f"{i:02d}| {lead["name"]:<20} | {lead["company"]: <17} | {lead["email"]: <20}")
+        print(f"{i:02d} | {lead['name']:<20} | {lead['company']:<17} | {lead['email']:<20}")
+
 
 def main():
     while True:
-        print("\nMini CRM - 1º Aula - (adicionar/listar")
+        print("\n--- Mini CRM ---")
         print("[1] Adicionar lead")
-        print("[2] Listar lead")
-        print("[3] Buscar (nome,email,empresa)")
+        print("[2] Listar leads")
+        print("[3] Buscar (nome, email, empresa)")
         print("[4] Exportar para CSV")
         print("[0] Sair")
 
-        cpt = input("Escolha uma opcao: ")
+        cpt = input("Escolha uma opção: ").strip()
         if cpt == "1":
             add_lead()
         elif cpt == "2":
             list_leads()
         elif cpt == "3":
             search_leads()
-        elif cpt =="4":
+        elif cpt == "4":
             export_leads()
         elif cpt == "0":
-            print("Sair")
+            print("Saindo...")
             break
         else:
-            print("Opcao invalida!")
+            print("Opção inválida!")
 
 
 if __name__ == "__main__":
